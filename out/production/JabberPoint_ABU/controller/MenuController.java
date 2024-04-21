@@ -19,6 +19,6 @@ public class MenuController extends JMenuBar {
 		this.actionHandler = new ActionHandler(parent, presentation, presentationManager);
 		this.menuBarBuilder = new MenuBarBuilder(parent, actionHandler);
 
-		this.add(menuBarBuilder.createMenuBar()); // add the created menu bar to this MenuController
+		this.add(menuBarBuilder.createMenuBar());
 	}
 }

@@ -9,8 +9,7 @@ import java.util.Optional;
 public class Presentation {
 
 	private final List<Slide> slides = new ArrayList<>();
-	private SlideViewer slideViewer; // Renamed for clarity: it's not a 'component' in the Swing sense.
-
+	private SlideViewer slideViewer; // Renamed for clarity:
 	private String title = "";
 	private int currentSlideIndex = 0;
 

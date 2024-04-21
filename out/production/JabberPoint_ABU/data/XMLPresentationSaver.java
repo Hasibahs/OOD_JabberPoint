@@ -50,7 +50,6 @@ public class XMLPresentationSaver implements PresentationSaver {
         if (item instanceof TextItem) {
             return ((TextItem)item).getText();
         } else if (item instanceof BitmapItem) {
-            // Use Optional's orElse method to provide a default value in case the Optional is empty
             return ((BitmapItem)item).getName().orElse("DefaultName");
         }
         return "Unsupported item type";
