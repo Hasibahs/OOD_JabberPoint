@@ -5,50 +5,36 @@ import model.Slide;
 import model.slideitems.BitmapItem;
 import model.slideitems.TextItem;
 
-
-public class DemoPresentation extends Accessor {
+/**
+ * A class responsible for loading a demo presentation.
+ */
+public class DemoPresentation implements PresentationLoader {
 
 	private static final String PRESENTATION_TITLE = "Demo Presentation";
-	private static final String SLIDE_TITLE_JABBERPOINT = "JabberPoint";
-	private static final String SLIDE_TITLE_DEMO_LEVELS = "Demonstration of levels and styles";
-	private static final String SLIDE_TITLE_THIRD_SLIDE = "The third slide";
-
 	private static final String IMAGE_PATH = "JabberPoint.jpg";
 
-
 	@Override
-	public void loadFile(Presentation presentation, String unusedFilename) {
+	public void load(Presentation presentation, String unusedFilename) {
 		presentation.setTitle(PRESENTATION_TITLE);
-
 		presentation.appendSlide(createIntroductionSlide());
 		presentation.appendSlide(createLevelsSlide());
 		presentation.appendSlide(createClosingSlide());
 	}
 
-
-	@Override
-	public void saveFile(Presentation presentation, String unusedFilename) {
-		throw new UnsupportedOperationException("Saving is not supported for the demo presentation.");
-	}
-
 	private Slide createIntroductionSlide() {
 		Slide slide = new Slide();
-		slide.setTitle(SLIDE_TITLE_JABBERPOINT);
+		slide.setTitle("JabberPoint");
 		slide.addSlideItem(new TextItem(1, "The Java presentation tool"));
-		slide.addSlideItem(new TextItem(2, "Copyright (c) 1996-2000: Ian Darwin"));
-		slide.addSlideItem(new TextItem(2, "Copyright (c) 2000-now: Gert Florijn and Sylvia Stuurman"));
-		slide.addSlideItem(new TextItem(4, "Calling Jabberpoint without a filename will show this presentation"));
-		slide.addSlideItem(new TextItem(1, "Navigate:"));
+		slide.addSlideItem(new TextItem(2, "How to navigate the presentation:"));
 		slide.addSlideItem(new TextItem(3, "Next slide: PgDn or Enter"));
 		slide.addSlideItem(new TextItem(3, "Previous slide: PgUp or up-arrow"));
 		slide.addSlideItem(new TextItem(3, "Quit: q or Q"));
 		return slide;
 	}
 
-
 	private Slide createLevelsSlide() {
 		Slide slide = new Slide();
-		slide.setTitle(SLIDE_TITLE_DEMO_LEVELS);
+		slide.setTitle("Demonstration of levels and styles");
 		slide.addSlideItem(new TextItem(1, "Level 1"));
 		slide.addSlideItem(new TextItem(2, "Level 2"));
 		slide.addSlideItem(new TextItem(1, "Again level 1"));
@@ -61,10 +47,8 @@ public class DemoPresentation extends Accessor {
 
 	private Slide createClosingSlide() {
 		Slide slide = new Slide();
-		slide.setTitle(SLIDE_TITLE_THIRD_SLIDE);
-		slide.addSlideItem(new TextItem(1, "To open a new presentation, use File->Open from the menu."));
-		slide.addSlideItem(new TextItem(1, " "));
-		slide.addSlideItem(new TextItem(1, "This is the end of the presentation."));
+		slide.setTitle("The third slide");
+		slide.addSlideItem(new TextItem(1, "This concludes the Demo Presentation."));
 		slide.addSlideItem(new BitmapItem(1, IMAGE_PATH));
 		return slide;
 	}

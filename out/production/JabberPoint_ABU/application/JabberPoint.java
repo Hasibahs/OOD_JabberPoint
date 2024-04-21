@@ -1,34 +1,49 @@
 package application;
 
-import data.Accessor;
-import data.XMLAccessor;
+import data.PresentationAccessorFactory;
+import data.PresentationLoader;
+import data.XMLPresentationLoader;
 import model.Presentation;
 import view.SlideViewerFrame;
 
-import javax.swing.*;
+import javax.swing.JOptionPane;
 import java.io.IOException;
 
-
 public class JabberPoint {
-	protected static final String IOERR = "IO Error: ";
-	protected static final String JABERR = "Jabberpoint Error ";
-	protected static final String JABVERSION = "Jabberpoint 1.6 - OU version";
+	private static final String IO_ERROR_MESSAGE = "IO Error: ";
+	private static final String JABBERPOINT_ERROR_MESSAGE = "Jabberpoint Error ";
+	private static final String JABBERPOINT_VERSION = "Jabberpoint 1.6 - OU version";
 
-	/** The main program */
-	public static void main(String[] argv) {
+	public static void main(String[] args) {
 		Presentation presentation = new Presentation();
-		new SlideViewerFrame(JABVERSION, presentation);
+		SlideViewerFrame viewer = new SlideViewerFrame(presentation);
+		loadPresentation(args, presentation);
+		presentation.setCurrentSlideIndex(0);
+	}
+
+	private static void loadPresentation(String[] args, Presentation presentation) {
 		try {
-			if (argv.length == 0) { // a demo presentation
-				Accessor.getDemoAccessor().loadFile(presentation, "");
+			if (args.length == 0) {
+				loadDemoPresentation(presentation);
 			} else {
-				new XMLAccessor().loadFile(presentation, argv[0]);
+				loadFromXMLFile(args[0], presentation);
 			}
-			presentation.setCurrentSlideIndex(0); // Correct method name used here
 		} catch (IOException ex) {
-			JOptionPane.showMessageDialog(null,
-					IOERR + ex, JABERR,
-					JOptionPane.ERROR_MESSAGE);
+			showErrorMessage(ex);
 		}
+	}
+
+	private static void loadDemoPresentation(Presentation presentation) throws IOException {
+		PresentationLoader demoLoader = PresentationAccessorFactory.getDemoAccessor();
+		demoLoader.load(presentation, ""); // Empty string as path might be necessary here
+	}
+
+	private static void loadFromXMLFile(String filePath, Presentation presentation) throws IOException {
+		PresentationLoader xmlLoader = new XMLPresentationLoader();
+		xmlLoader.load(presentation, filePath);
+	}
+
+	private static void showErrorMessage(IOException ex) {
+		JOptionPane.showMessageDialog(null, IO_ERROR_MESSAGE + ex, JABBERPOINT_ERROR_MESSAGE, JOptionPane.ERROR_MESSAGE);
 	}
 }

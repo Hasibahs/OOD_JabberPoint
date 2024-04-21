@@ -1,36 +1,48 @@
 package controller;
 
 import model.Presentation;
-
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
 public class KeyController extends KeyAdapter {
-	private Presentation presentation; //Commands are given to the presentation
+	private Presentation presentation;
 
-	public KeyController(Presentation p) {
-		presentation = p;
+	public KeyController(Presentation presentation) {
+		this.presentation = presentation;
 	}
 
+	@Override
 	public void keyPressed(KeyEvent keyEvent) {
 		switch (keyEvent.getKeyCode()) {
 			case KeyEvent.VK_PAGE_DOWN:
 			case KeyEvent.VK_DOWN:
 			case KeyEvent.VK_ENTER:
 			case '+':
-				presentation.nextSlide();
+				navigateToNextSlide();
 				break;
 			case KeyEvent.VK_PAGE_UP:
 			case KeyEvent.VK_UP:
 			case '-':
-				presentation.previousSlide(); // Corrected method name
+				navigateToPreviousSlide();
 				break;
 			case 'q':
 			case 'Q':
-				System.exit(0);
-				break; //Should not be reached
+				exitApplication();
+				break;
 			default:
 				break;
 		}
+	}
+
+	private void navigateToNextSlide() {
+		presentation.nextSlide();
+	}
+
+	private void navigateToPreviousSlide() {
+		presentation.previousSlide();
+	}
+
+	private void exitApplication() {
+		System.exit(0);
 	}
 }

@@ -7,27 +7,30 @@ import javax.swing.*;
 import java.awt.*;
 
 public class SlideViewer extends JComponent {
+	private static final long serialVersionUID = 227L;
+	private static final Color BACKGROUND_COLOR = Color.WHITE;
+	private static final Color TEXT_COLOR = Color.BLACK;
+	private static final String LABEL_FONT_NAME = "Dialog";
+	private static final int LABEL_FONT_STYLE = Font.BOLD;
+	private static final int LABEL_FONT_HEIGHT = 10;
+	private static final int LABEL_X_POSITION = 1100;
+	private static final int LABEL_Y_POSITION = 20;
 
 	private Slide currentSlide;
-	private final Font labelFont;
 	private Presentation currentPresentation;
 	private final JFrame mainFrame;
-
-	private static final long serialVersionUID = 227L;
-
-	private static final Color backgroundColor = Color.white;
-	private static final Color textColor = Color.black;
-	private static final String labelFontName = "Dialog";
-	private static final int labelFontStyle = Font.BOLD;
-	private static final int labelFontHeight = 10;
-	private static final int labelXPosition = 1100;
-	private static final int labelYPosition = 20;
+	private final Font labelFont;
 
 	public SlideViewer(Presentation presentation, JFrame frame) {
-		setBackground(backgroundColor);
 		this.currentPresentation = presentation;
-		this.labelFont = new Font(labelFontName, labelFontStyle, labelFontHeight);
 		this.mainFrame = frame;
+		this.labelFont = new Font(LABEL_FONT_NAME, LABEL_FONT_STYLE, LABEL_FONT_HEIGHT);
+		configureComponent();
+	}
+
+	private void configureComponent() {
+		setBackground(BACKGROUND_COLOR);
+		setOpaque(true);
 	}
 
 	@Override
@@ -38,28 +41,48 @@ public class SlideViewer extends JComponent {
 	public void update(Presentation presentation, Slide slide) {
 		this.currentPresentation = presentation;
 		this.currentSlide = slide;
+		updateMainFrameTitle(presentation.getTitle());
 		repaint();
+	}
+
+	private void updateMainFrameTitle(String title) {
 		if (mainFrame != null) {
-			mainFrame.setTitle(presentation.getTitle());
+			mainFrame.setTitle(title);
 		}
 	}
 
 	@Override
 	protected void paintComponent(Graphics g) {
-		super.paintComponent(g); // Swing best practice
-		g.setColor(backgroundColor);
-		g.fillRect(0, 0, getWidth(), getHeight());
+		super.paintComponent(g);
+		clearBackground(g);
 
-		if (currentPresentation.getCurrentSlideIndex() < 0 || currentSlide == null) {
+		if (!isValidSlide()) {
 			return;
 		}
 
-		g.setFont(labelFont);
-		g.setColor(textColor);
-		g.drawString("Slide " + (1 + currentPresentation.getCurrentSlideIndex()) + " of " +
-				currentPresentation.getNumberOfSlides(), labelXPosition, labelYPosition);
+		drawSlideLabel(g);
+		drawSlideContent(g);
+	}
 
-		Rectangle area = new Rectangle(0, labelYPosition, getWidth(), (getHeight() - labelYPosition));
+	private void clearBackground(Graphics g) {
+		g.setColor(BACKGROUND_COLOR);
+		g.fillRect(0, 0, getWidth(), getHeight());
+	}
+
+	private boolean isValidSlide() {
+		return currentPresentation.getCurrentSlideIndex() >= 0 && currentSlide != null;
+	}
+
+	private void drawSlideLabel(Graphics g) {
+		g.setFont(labelFont);
+		g.setColor(TEXT_COLOR);
+		String slideInfo = String.format("Slide %d of %d", 1 + currentPresentation.getCurrentSlideIndex(),
+				currentPresentation.getNumberOfSlides());
+		g.drawString(slideInfo, LABEL_X_POSITION, LABEL_Y_POSITION);
+	}
+
+	private void drawSlideContent(Graphics g) {
+		Rectangle area = new Rectangle(0, LABEL_Y_POSITION, getWidth(), getHeight() - LABEL_Y_POSITION);
 		currentSlide.draw(g, area, this);
 	}
 }
