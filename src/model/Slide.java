@@ -39,7 +39,7 @@ public class Slide {
 	}
 
 	public List<SlideItem> getSlideItems() {
-		return new ArrayList<>(items); // To prevent modification of the internal list
+		return new ArrayList<>(items);
 	}
 
 	public int getNumberOfSlideItems() {
