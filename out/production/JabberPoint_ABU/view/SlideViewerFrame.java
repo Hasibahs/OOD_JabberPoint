@@ -4,7 +4,7 @@ import controller.KeyController;
 import controller.MenuController;
 import model.Presentation;
 
-import javax.swing.*;
+import javax.swing.JFrame;
 
 public class SlideViewerFrame extends JFrame {
 
@@ -13,24 +13,28 @@ public class SlideViewerFrame extends JFrame {
 	private static final int FRAME_WIDTH = 1200;
 	private static final int FRAME_HEIGHT = 800;
 
-	private SlideViewer slideViewerComponent;
+	private SlideViewer slideViewer;
 
-	public SlideViewerFrame(String jabversion, Presentation presentation) {
+	public SlideViewerFrame(Presentation presentation) {
 		super(DEFAULT_TITLE);
-		initialize(presentation);
+		setupFrame(presentation);
 	}
 
-	private void initialize(Presentation presentation) {
-		slideViewerComponent = new SlideViewer(presentation, this); // Updated constructor call
-		presentation.setSlideViewerComponent(slideViewerComponent); // Consider renaming this method
-		setupWindow(presentation);
+	private void setupFrame(Presentation presentation) {
+		initializeComponents(presentation);
+		configureWindowSettings();
 	}
 
-	private void setupWindow(Presentation presentation) {
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		getContentPane().add(slideViewerComponent);
+	private void initializeComponents(Presentation presentation) {
+		slideViewer = new SlideViewer(presentation, this);
+		presentation.setSlideViewer(slideViewer);
+		getContentPane().add(slideViewer);
 		addKeyListener(new KeyController(presentation));
-		setJMenuBar(new MenuController(this, presentation)); // Directly passing the MenuController
+		setJMenuBar(new MenuController(this, presentation));
+	}
+
+	private void configureWindowSettings() {
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setSize(FRAME_WIDTH, FRAME_HEIGHT);
 		setVisible(true);
 	}

@@ -1,75 +1,71 @@
 package model.slideitems;
 
 import util.Style;
-
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.awt.image.ImageObserver;
 import java.io.File;
 import java.io.IOException;
+import java.util.Optional;
 
 public class BitmapItem extends SlideItem {
-  private BufferedImage bufferedImage;
-  private String imageName;
-  
-  protected static final String FILE = "File ";
-  protected static final String NOTFOUND = " not found";
+	private BufferedImage bufferedImage;
+	private Optional<String> imageName;
 
+	private static final String FILE_NOT_FOUND_MESSAGE = "File not found";
 
-  	//level indicates the item-level; name indicates the name of the file with the image
 	public BitmapItem(int level, String name) {
 		super(level);
-		imageName = name;
-		try {
-			bufferedImage = ImageIO.read(new File(imageName));
-		}
-		catch (IOException e) {
-			System.err.println(FILE + imageName + NOTFOUND) ;
-		}
+		imageName = Optional.ofNullable(name);
+		loadImage();
 	}
 
-	//An empty bitmap item
 	public BitmapItem() {
 		this(0, null);
 	}
 
-	//Returns the filename of the image
-	public String getName() {
+	private void loadImage() {
+		imageName.ifPresent(name -> {
+			try {
+				bufferedImage = ImageIO.read(new File(name));
+			} catch (IOException e) {
+				System.err.println(FILE_NOT_FOUND_MESSAGE + ": " + name);
+			}
+		});
+	}
+
+	public Optional<String> getName() {
 		return imageName;
 	}
 
-	//Returns the bounding box of the image
-	// Returns the bounding box of the image
 	public Rectangle getBoundingBox(Graphics g, ImageObserver observer, float scale, Style myStyle) {
-		// Use the getter methods instead of direct field access
+		int imageWidth = (bufferedImage != null) ? bufferedImage.getWidth(observer) : 0;
+		int imageHeight = (bufferedImage != null) ? bufferedImage.getHeight(observer) : 0;
 		return new Rectangle(
 				(int) (myStyle.getIndent() * scale), 0,
-				(int) (bufferedImage.getWidth(observer) * scale),
-				(int) (myStyle.getLeading() * scale) +
-						(int) (bufferedImage.getHeight(observer) * scale)
+				(int) (imageWidth * scale),
+				(int) (myStyle.getLeading() * scale) + (int) (imageHeight * scale)
 		);
 	}
 
-
-	//Draws the image
-	// Draws the image
 	public void draw(int x, int y, float scale, Graphics g, Style myStyle, ImageObserver observer) {
-		// Use the getter methods instead of direct field access
-		int width = x + (int) (myStyle.getIndent() * scale);
-		int height = y + (int) (myStyle.getLeading() * scale);
-		g.drawImage(
-				bufferedImage,
-				width,
-				height,
-				(int) (bufferedImage.getWidth(observer) * scale),
-				(int) (bufferedImage.getHeight(observer) * scale),
-				observer
-		);
+		if (bufferedImage != null) {
+			int width = x + (int) (myStyle.getIndent() * scale);
+			int height = y + (int) (myStyle.getLeading() * scale);
+			g.drawImage(
+					bufferedImage,
+					width,
+					height,
+					(int) (bufferedImage.getWidth(observer) * scale),
+					(int) (bufferedImage.getHeight(observer) * scale),
+					observer
+			);
+		}
 	}
 
-
+	@Override
 	public String toString() {
-		return "BitmapItem[" + getLevel() + "," + imageName + "]";
+		return "BitmapItem[level=" + getLevel() + ", name=" + imageName.orElse("No image") + "]";
 	}
 }

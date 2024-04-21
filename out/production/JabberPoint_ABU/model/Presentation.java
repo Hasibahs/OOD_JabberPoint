@@ -1,29 +1,25 @@
 package model;
 
 import view.SlideViewer;
-
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 public class Presentation {
 
-	private String title;
-	private final List<Slide> slides;
+	private final List<Slide> slides = new ArrayList<>();
+	private SlideViewer slideViewer; // Renamed for clarity: it's not a 'component' in the Swing sense.
+
+	private String title = "";
 	private int currentSlideIndex = 0;
-	private SlideViewer slideViewerComponent;
+
+	public Presentation(SlideViewer slideViewer) {
+		this.slideViewer = slideViewer;
+	}
 
 	public Presentation() {
 		this(null);
-	}
-
-	public Presentation(SlideViewer slideViewerComponent) {
-		this.slideViewerComponent = slideViewerComponent;
-		slides = new ArrayList<>();
-		title = "";
-	}
-
-	public int getNumberOfSlides() {
-		return slides.size();
 	}
 
 	public String getTitle() {
@@ -34,10 +30,6 @@ public class Presentation {
 		title = newTitle;
 	}
 
-	public void setSlideViewerComponent(SlideViewer newSlideViewerComponent) {
-		this.slideViewerComponent = newSlideViewerComponent;
-	}
-
 	public int getCurrentSlideIndex() {
 		return currentSlideIndex;
 	}
@@ -45,47 +37,54 @@ public class Presentation {
 	public void setCurrentSlideIndex(int newSlideIndex) {
 		if (isValidSlideIndex(newSlideIndex)) {
 			currentSlideIndex = newSlideIndex;
-			updateSlideViewerComponent();
+			updateSlideViewer();
 		}
-	}
-
-	public void previousSlide() {
-		setCurrentSlideIndex(currentSlideIndex - 1);
 	}
 
 	public void nextSlide() {
 		setCurrentSlideIndex(currentSlideIndex + 1);
 	}
 
-	public void appendSlide(Slide slide) {
-		slides.add(slide);
+	public void previousSlide() {
+		setCurrentSlideIndex(currentSlideIndex - 1);
 	}
 
-	public Slide getSlide(int index) {
-		if (isValidSlideIndex(index)) {
-			return slides.get(index);
-		}
-		return null;
+	public int getNumberOfSlides() {
+		return slides.size();
 	}
 
-	public Slide getCurrentSlide() {
+	public Optional<Slide> getSlide(int index) {
+		return isValidSlideIndex(index) ? Optional.of(slides.get(index)) : Optional.empty();
+	}
+
+	public Optional<Slide> getCurrentSlide() {
 		return getSlide(currentSlideIndex);
 	}
 
 	public List<Slide> getSlides() {
-		return new ArrayList<>(slides); // Return a copy of the slides list to prevent external modification
+		return Collections.unmodifiableList(slides);
 	}
 
+	public void appendSlide(Slide slide) {
+		slides.add(slide);
+	}
 
 	public void clear() {
 		slides.clear();
 		currentSlideIndex = 0;
 	}
 
-	protected void updateSlideViewerComponent() {
-		if (slideViewerComponent != null && isValidSlideIndex(currentSlideIndex)) {
-			slideViewerComponent.update(this, getCurrentSlide());
-		}
+	public void setSlideViewer(SlideViewer slideViewer) {
+		this.slideViewer = slideViewer;
+	}
+
+	// Updated the method name for clarity
+	private void updateSlideViewer() {
+		getCurrentSlide().ifPresent(slide -> {
+			if (slideViewer != null) {
+				slideViewer.update(this, slide);
+			}
+		});
 	}
 
 	private boolean isValidSlideIndex(int index) {

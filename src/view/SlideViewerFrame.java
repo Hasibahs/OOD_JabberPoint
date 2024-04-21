@@ -16,7 +16,7 @@ public class SlideViewerFrame extends JFrame {
 	private SlideViewer slideViewer;
 
 	public SlideViewerFrame(Presentation presentation) {
-		super(DEFAULT_TITLE);	
+		super(DEFAULT_TITLE);
 		setupFrame(presentation);
 	}
 

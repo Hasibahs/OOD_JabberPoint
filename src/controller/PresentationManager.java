@@ -19,21 +19,21 @@ public class PresentationManager {
     }
 
     public void openPresentation() {
-        presentation.clear();  // Clears current presentation data
+        presentation.clear();
         PresentationLoader xmlLoader = new XMLPresentationLoader(); // use the XML loader
         try {
-            xmlLoader.load(presentation, "testPresentation.xml");  // Assume file name is given
-            presentation.setCurrentSlideIndex(0);  // Set to start from the first slide
+            xmlLoader.load(presentation, "testPresentation.xml");
+            presentation.setCurrentSlideIndex(0);
         } catch (IOException exc) {
             JOptionPane.showMessageDialog(parent, "IO Exception: " + exc.getMessage(), "Load Error", JOptionPane.ERROR_MESSAGE);
         }
-        parent.repaint();  // Refresh UI to reflect loaded presentation
+        parent.repaint();
     }
 
     public void savePresentation() {
         PresentationSaver xmlSaver = new XMLPresentationSaver();  // Use the XML saver
         try {
-            xmlSaver.save(presentation, "savedPresentation.xml");  // Assume file name is given
+            xmlSaver.save(presentation, "savedPresentation.xml");
         } catch (IOException exc) {
             JOptionPane.showMessageDialog(parent, "IO Exception: " + exc.getMessage(), "Save Error", JOptionPane.ERROR_MESSAGE);
         }
